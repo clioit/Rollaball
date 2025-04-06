@@ -12,8 +12,8 @@ public class PlayerController : MonoBehaviour
     private int count;
     private float movementX;
     private float movementY;
-    // private float Yvelocity;
-    // private int jumpHeight = 5;
+    private float timesJumped;
+    private float jumpForce = 4;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -48,6 +48,20 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(movement * speed);
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Space detected");
+            if (timesJumped == 0 || timesJumped == 1)
+            {
+                rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.Impulse);
+                Debug.Log("\t\tTimes Jumped: " + timesJumped.ToString());
+                timesJumped++;
+            }
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {   
         if (other.gameObject.CompareTag("PickUp")) 
@@ -56,6 +70,15 @@ public class PlayerController : MonoBehaviour
             count += 1;
 
             SetCountText();
+        }
+    }
+    
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Found a collision: " + collision.gameObject.name);
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            timesJumped = 0;
         }
     }
 }
